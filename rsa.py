@@ -39,7 +39,7 @@ def rsa_generate_keys(key_size: int = 1024) -> (tuple[int, int, int, int], tuple
     print(f'd1: {d1}')
     # modular inverse
     d2 = pow(e, -1, phi)
-    print(f'd1: {d2}')
+    print(f'd2: {d2}')
     # private_key, public_key
     return (p, q, n, d2), (n, e)
 
