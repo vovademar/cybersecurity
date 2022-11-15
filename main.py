@@ -2,44 +2,24 @@ import math
 import rabin_miller
 import random
 import keccak
-
-
-def egcd(a, b):
-    if a == 0:
-        return b, 0, 1
-    else:
-        g, y, x = egcd(b % a, a)
-        return g, x - (b // a) * y, y
-
-
-def modularInverse(a, m):
-    g, x, y = egcd(a, m)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % m
+import rsa.core as core
 
 
 def generate_keypair(key_size: int = 1024) -> (tuple[int, int, int, int], tuple[int, int]):
-
     p = rabin_miller.generate_large_prime(key_size)
     q = rabin_miller.generate_large_prime(key_size)
 
     n = p * q
-    phi = (p - 1) * (q - 1)
+    euler = (p - 1) * (q - 1)
 
     while True:
         e = random.randrange(pow(2, key_size - 1), pow(2, key_size))
-        if math.gcd(e, phi) == 1:
+        if math.gcd(e, euler) == 1:
             break
 
-    d1 = modularInverse(e, phi)
-    print(f'd1: {d1}')
     # modular inverse
-    d2 = pow(e, -1, phi)
-    print(f'd2: {d2}')
-    # private_key, public_key
-    return (p, q, n, d2), (n, e)
+    d = pow(e, -1, euler)
+    return (p, q, n, d), (n, e)
 
 
 def rsa_encrypt(public_key: tuple[int, int], message: int) -> int:
@@ -59,13 +39,13 @@ def simple_test():
     keys = generate_keypair()
     private_key = keys[0]
     public_key = keys[1]
-
     a = 123
     encrypt = rsa_encrypt(public_key, a)
     dec = rsa_decrypt(private_key, encrypt)
     print(f'Before encrypt: {a}')
     print(f'After encrypt: {encrypt}')
     print(f'After decrypt: {dec}')
+    print(f'Reference: {core.decrypt_int(encrypt, private_key[3], private_key[2])}')
 
 
 def big_test():
@@ -80,6 +60,8 @@ def big_test():
     print(f'Hash before encrypt: {fileHash}')
     print(f'After encrypt: {encrypt}')
     print(f'Hash after decrypt: {hex(dec)[2:]}')
+    reference = core.decrypt_int(encrypt, private_key[3], private_key[2])
+    print(f'Reference: {hex(reference)[2:]}')
 
 
 simple_test()
