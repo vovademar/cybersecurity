@@ -20,9 +20,7 @@ def modularInverse(a, m):
         return x % m
 
 
-def rsa_generate_keys(key_size: int = 1024) -> (tuple[int, int, int, int], tuple[int, int]):
-    if key_size < 1 or key_size % 8 != 0:
-        raise Exception('key_size must be positive and multiple by 8')
+def generate_keypair(key_size: int = 1024) -> (tuple[int, int, int, int], tuple[int, int]):
 
     p = rabin_miller.generate_large_prime(key_size)
     q = rabin_miller.generate_large_prime(key_size)
@@ -58,7 +56,7 @@ def rsa_decrypt(private_key: tuple[int, int, int, int], cipher: int) -> int:
 
 def simple_test():
     print('Simple test')
-    keys = rsa_generate_keys()
+    keys = generate_keypair()
     private_key = keys[0]
     public_key = keys[1]
 
@@ -72,7 +70,7 @@ def simple_test():
 
 def big_test():
     print('Big test')
-    keys = rsa_generate_keys()
+    keys = generate_keypair()
     private_key = keys[0]
     public_key = keys[1]
     fileHash = keccak.calculateHash('file')
