@@ -1,1 +1,1 @@
-# cybersecurity
+# Tasks for cybersecurity course
