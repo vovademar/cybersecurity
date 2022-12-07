@@ -107,11 +107,6 @@ contract Shop {
         return getItem(itemId).title;
     }
 
-    function setBalance(uint amount) external payable onlyOwner {
-        require(msg.value >= amount);
-        address payable _to = payable(owner);
-        _to.transfer(msg.value);
-    }
 
     function getItemId(uint itemId) public view returns(uint) {
         return getItem(itemId).itemId;
